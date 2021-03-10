@@ -86,6 +86,10 @@ cy.get('[data-cy=“my-test-option-dropdown”]').trigger('mouseover', 10, 20);
 
 ### Do a drag-drop
 
+```javascript
+/* Coming soon */
+```
+
 ## Asserts
 
 ### Assert text of an element
