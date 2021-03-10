@@ -124,7 +124,7 @@ cy.get('@my-button').then( $button_element => {
 } );
 ```
 
-### Using wrap to wrap an element back to a form that can use should syntax
+### Using "wrap" to wrap an element back to a form that can use "should" syntax
 
 ```javascript
 cy.get('[data-cy="my-test-button"]').then( $button_element => {
