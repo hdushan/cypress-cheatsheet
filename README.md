@@ -1,3 +1,9 @@
+<!--
+  Title: Cypress Cheat Sheet
+  Description: Cypress selectors, assertions, and other helpful code snippets.
+  Author: Hans Dushanthakumar
+  -->
+
 # Cypress Cheat Sheet
 
 ## Test syntax
