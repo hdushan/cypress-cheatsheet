@@ -195,7 +195,7 @@ cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
 ## Read environment variable
 
 ```javascript
-/*Prefix the env var with 'CYPRESS_'. For eg, CYPRESS_TEST_VAR=Test*/
+/* Prefix the environment variable name with 'CYPRESS_'. For eg, CYPRESS_TEST_VAR=Test */
 Cypress.env('TEST_VAR');
 ```
 
