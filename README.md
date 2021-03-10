@@ -78,7 +78,7 @@ cy.get('[data-cy="my-test-option-dropdown"]').select('Option 1');
 cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover');
 ```
 
-### Trigger event on an element at a certain coordinate (number of x,y pixels from the top left cornet of the element)
+### Trigger event on an element at a certain coordinate (number of x,y pixels from the top left corner of the element)
 
 ```javascript
 cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20);
@@ -115,7 +115,7 @@ cy.get('h1').should('have.attr', 'value', 'Test');
 cy.get('h1').eq(1).should('have.attr', 'value', 'Test');   /*If we want to use the 2nd h1 when there are more than one h1's*/
 ```
 
-### Assertion using expect syntax
+### Assertion using "expect" syntax
 
 ```javascript
 cy.get('[data-cy="my-test-button"]') as('my-button');
@@ -191,6 +191,50 @@ cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
 ```javascript
 /*Prefix the env var with 'CYPRESS_'. For eg, CYPRESS_TEST_VAR=Test*/
 Cypress.env('TEST_VAR');
+```
+
+## Overwrite the "cy.log" command to log to terminal instead of browser console
+
+```javascript
+/* Define a "log" task in the "plugins/index.js" file as below */
+module.exports = (on, config) => {
+  on('task', {
+    log: message => {
+      console.log(message);
+      return null;
+    },
+  });
+};
+
+/* Overwrite the "cy.log" command in the "support/commands.js" file as below */
+Cypress.Commands.overwrite('log', (subject, message) =>
+  cy.task('log', message);
+);
+
+/* Once the above 2 changes are done, any call to "cy.log" will now log to terminal */
+cy.log('Test');
+```
+
+## Intercept a GraphQL request sent by the browser and extract something from its response
+
+```javascript
+/* Add a command as below in the "support/commands.js" file */
+Cypress.Commands.add('interceptMyGraphqlRequest', () => {
+  cy.intercept('POST', /^https:\/\/api.*\/mywebsite\/graphql$/, req => {
+    if (req.body.operationName.includes('myOperationName')) {
+      req.alias = 'myGraphqlRequest';
+    }
+  });
+});
+
+/* And in your spec where you want to start intercepting, add the below line right before the step that results in the graphQL request being sent out */
+cy.interceptMyGraphqlRequest();
+
+/* To wait for the request and process its response */
+cy.wait('@myGraphqlRequest').then(graphqlRequestDetails => {
+  const myField = graphqlRequestDetails.response.body.data.result.fieldThatICareAbout;
+  expect(myField).to.match(/\d+/);
+});
 ```
 
 ## Misc
