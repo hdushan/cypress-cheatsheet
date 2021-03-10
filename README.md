@@ -36,7 +36,7 @@ cy.contains('Submit')
 ### Select element using the "data-cy" attribute (cypress-recommended tag)
 
 ```javascript
-cy.get('[data-cy=“my-test-button”]').invoke('text').should('equal', 'Test')
+cy.get('[data-cy="my-test-button"]').invoke('text').should('equal', 'Test')
 ```
 
 ## Interacting with page elements
@@ -56,32 +56,32 @@ cy.get('input').type('I am pressing enter now {enter}');
 ### Double click
 
 ```javascript
-cy.get('[data-cy=“my-test-button”] > :nth-child(2)').dblclick();
+cy.get('[data-cy="my-test-button"] > :nth-child(2)').dblclick();
 ```
 
 ### Check/Un-check check-boxes
 
 ```javascript
-cy.get('[data-cy=“my-test-checkbox”]').check();
-cy.get('[data-cy=“my-test-checkbox”]').uncheck();
+cy.get('[data-cy="my-test-checkbox"]').check();
+cy.get('[data-cy="my-test-checkbox"]').uncheck();
 ```
 
 ### Select from drop-down by text
 
 ```javascript
-cy.get('[data-cy=“my-test-option-dropdown”]').select('Option 1');
+cy.get('[data-cy="my-test-option-dropdown"]').select('Option 1');
 ```
 
 ### Trigger event on an element
 
 ```javascript
-cy.get('[data-cy=“my-test-option-dropdown”]').trigger('mouseover');
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover');
 ```
 
 ### Trigger event on an element at a certain coordinate (number of x,y pixels from the top left cornet of the element)
 
 ```javascript
-cy.get('[data-cy=“my-test-option-dropdown”]').trigger('mouseover', 10, 20);
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20);
 ```
 
 ### Do a drag-drop
@@ -118,7 +118,7 @@ cy.get('h1').eq(1).should('have.attr', 'value', 'Test');   /*If we want to use t
 ### Assertion using expect syntax
 
 ```javascript
-cy.get('[data-cy=“my-test-button”]') as('my-button');
+cy.get('[data-cy="my-test-button"]') as('my-button');
 cy.get('@my-button').then( $button_element => {
   expect($button_element.text()).to.equal('Test');
 } );
@@ -127,7 +127,7 @@ cy.get('@my-button').then( $button_element => {
 ### Using wrap to wrap an element back to a form that can use should syntax
 
 ```javascript
-cy.get('[data-cy=“my-test-button”]').then( $button_element => {
+cy.get('[data-cy="my-test-button"]').then( $button_element => {
   cy.wrap($button_element).should('exist');
 } );
 ```
@@ -135,53 +135,53 @@ cy.get('[data-cy=“my-test-button”]').then( $button_element => {
 ### Assert number of matching elements
 
 ```javascript
-cy.get('[data-cy=“my-test-buttons”]').should('have.length', 2)
+cy.get('[data-cy="my-test-buttons"]').should('have.length', 2)
 ```
 
 ### Assert length of text in element
 
 ```javascript
-cy.get('[data-cy=“my-test-button”]').invoke('text').should('have.length', 4)
+cy.get('[data-cy="my-test-button"]').invoke('text').should('have.length', 4)
 ```
 
 ### Assert that element exists/does not exist
 
 ```javascript
-cy.get('[data-cy=“peekaboo”]').should('exist')
-cy.get('[data-cy=“peekaboo”]').should('not.exist')
+cy.get('[data-cy="peekaboo"]').should('exist')
+cy.get('[data-cy="peekaboo"]').should('not.exist')
 ```
 
 ### Assert that element is visible / not visible
 
 ```javascript
-cy.get('[data-cy=“peekaboo”]').should('be.visible')
-cy.get('[data-cy=“peekaboo”]').should('not.be.visible')
+cy.get('[data-cy="peekaboo"]').should('be.visible')
+cy.get('[data-cy="peekaboo"]').should('not.be.visible')
 ```
 
 ### Assert that element has a certain class
 
 ```javascript
-cy.get('[data-cy=“classy”]').should('have.class', 'my-class')
+cy.get('[data-cy="classy"]').should('have.class', 'my-class')
 ```
 
 ### Assert that element has a certain style
 
 ```javascript
-cy.get('[data-cy=“classy”]').should('have.css', 'background-color', 'red')
+cy.get('[data-cy="classy"]').should('have.css', 'background-color', 'red')
 ```
 
 ## Aliasing
 
 ```javascript
-cy.get('[data-cy=“my-test-button”]') as('my-button');
+cy.get('[data-cy="my-test-button"]') as('my-button');
 cy.get('@my-button').invoke('text').should('equal', 'Test')
 ```
 
 ## Pause execution to allow time to debug
 
 ```javascript
-cy.get('[data-cy=“my-test-option-dropdown”]').trigger('mouseover').debug();
-cy.get('[data-cy=“my-test-option-dropdown”]').trigger('mouseover').then(() => {
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').debug();
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
   debugger;
 );
 ```
@@ -198,7 +198,7 @@ Cypress.env('TEST_VAR');
 ### Cypress code completion in VS Code in file
 
 ```javascript
-/// <reference types=“Cypress” />
+/// <reference types="Cypress" />
 ```
 
 ### Cypress code completion in VS Code for whole project
@@ -206,9 +206,9 @@ Cypress.env('TEST_VAR');
 ```javascript
 /*In file jsconfig.json in root folder of project*/
 {
-  “Include”: [
-    “./node_modules/cypress”,
-    “cypress/**/*.js”
+  "Include": [
+    "./node_modules/cypress",
+    "cypress/**/*.js"
   ]
 }
 ```
