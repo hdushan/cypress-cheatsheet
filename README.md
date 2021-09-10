@@ -65,6 +65,12 @@ cy.get('input').type('I am pressing enter now {enter}');
 cy.get('[data-cy="my-test-button"] > :nth-child(2)').dblclick();
 ```
 
+### Preventing from opening in new tab
+
+```javascript
+cy.get('a').invoke('removeAttr', 'target').click()
+```
+
 ### Check/Un-check check-boxes
 
 ```javascript
@@ -102,7 +108,8 @@ cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20);
 
 ```javascript
 cy.get('h1').invoke('text').should('equal', 'Test');
-cy.get('h1').eq(2).invoke('text').should('equal', 'Test');  /*If we want to use the 3rd h1 when there are more than one h1's*/
+cy.get('h1').eq(2).should('have.text', 'Test') /* Use 'eq(n)' to pick the (n-1)th  matching element */
+cy.get('h1').eq(2).invoke('text').should('equal', 'Test');  
 cy.get('h1').should('contain', 'Test')
 cy.get('h1').should('not.contain', 'Junk')
 ```
@@ -199,6 +206,19 @@ cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
 Cypress.env('TEST_VAR');
 ```
 
+## Simulate a logged-in user by manually setting a cookie to have a populated token
+
+```javascript
+/* This assumes that a cookie 'user_token' is set on successful login */
+cy.setCookie('user_token', '<value of token of a loggen-in user>');
+
+/* Cypress clears cookies by default between tests. To NOT clear a specific cookie, add the below in `support/index.js` */
+Cypress.Cookies.defaults({preserve: 'trello_token'})
+
+/* To preserve cookies only for tests in a specifc spec file, add this to the `beforeEach` in that spec file, and then do a setCookie in the first test */
+Cypress.Cookies.preserveOnce('trello_token')
+```
+
 ## Overwrite the "cy.log" command to log to terminal instead of browser console
 
 ```javascript
@@ -221,7 +241,44 @@ Cypress.Commands.overwrite('log', (subject, message) =>
 cy.log('Test');
 ```
 
-## Intercept a GraphQL request sent by the browser and extract something from its response
+## Network requests
+
+### Send a http request
+
+```javascript
+cy.request({
+  method: 'POST',
+  url: '/url/endpoint'
+  body: (
+    parameter1: 'First parameter'
+  )
+})
+```
+
+### Intercept a browser request, and wait for that request to complete before moving on
+
+```javascript
+cy.intercept({
+  method: 'GET',
+  url: '/path/endpoint'
+}).as('requestToWaitFor') // alias this 
+
+cy.wait('@requestToWaitFor')  // wait for the alised intercept
+  .its('response.statusCode') // assert status code
+  .should('eq', 200)
+
+//OR
+
+cy.wait('@requestToWaitFor')  // wait for the alised intercept
+  .then( (importantRequest) => { // make multiple assertions
+    expect(importantRequest.response.statusCode).to.eq(200)
+    expect(importantRequest.request.body.parameter1).to.eq('First parameter')
+  })
+
+cy.get('#elementId').click() // This will be run only after the wait above
+```
+
+### Intercept a GraphQL request sent by the browser and extract something from its response
 
 ```javascript
 /* Add a command as below in the "support/commands.js" file */
@@ -241,6 +298,58 @@ cy.wait('@myGraphqlRequest').then(graphqlRequestDetails => {
   const myField = graphqlRequestDetails.response.body.data.result.fieldThatICareAbout;
   expect(myField).to.match(/\d+/);
 });
+```
+
+### Intercepting and sending a stubbed response
+
+```javascript
+// Add this intercept statement before performing an action that results in this request
+cy.intercept({
+  method: 'GET',
+  url: '/path/endpoint'
+}, {
+  body: [] // return empty array as body
+  // OR
+  fixture: 'name_of_fixture_json_file_in_fixtures_folder' // Note: dont add '.json' at end
+  // OR
+  forceNetworkError: true // to force a network error for this request
+}).as('requestToSendAStubbedResponseFor') // alias this 
+
+// If more manipulation is needed for the stubbing, use this
+cy.intercept({
+  method: 'GET',
+  url: '/path/endpoint'
+}, (request) => {
+  console.log(request)
+  request.reply( (response) => {
+    console.log(response) // Log actual response
+    response.body[1].parameter1 = 'Manipulated parameter 1 in response'
+    return response
+  })
+}).as('requestToSendAStubbedResponseFor') // alias this 
+```
+
+## Run a task, for example, initialize a database before the test
+
+```javascript
+// Create a file in the `plugins` folder, with the implementation of the reset in a file `initializeDatabase.js`
+module.exports.initData = (parameter = empty) => {
+  // Do stuff to DB using 'parameter'
+};
+
+// Inside the `plugins/index.js` file, add a task as below:
+const { initializeData } = require('./initializeDatabase')
+
+module.exports = (on, config) => {
+  on('task', {
+    initData: initializeData
+  })
+} 
+
+// Now in the spec file, run this task as below
+cy.task('initData', {
+  myData: 'Test'
+})
 ```
 
 ## Misc
