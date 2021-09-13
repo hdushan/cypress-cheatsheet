@@ -10,19 +10,33 @@
 
 ```javascript
 describe('This is my test', () => {
+  before(() => {
+    console.log('Runs once before all tests')
+  })
+
   beforeEach(() => {
-    cy.visit('http://www.google.com');
-  });
+    console.log('Runs before each test')
+    cy.visit('http://www.google.com')
+  })
+
   it('works fine', () => {
-    cy.get('input[name="q"]').type('hello');
-  });
-});
+    cy.get('input[name="q"]').type('hello')
+  })
+
+  afterEach(() => {
+    console.log('Runs after each test')
+  })
+
+  after(() => {
+    console.log('Runs once after all tests')
+  })
+})
 ```
 
 ## Visit page
 
 ```javascript
-cy.visit('http://www.google.com');
+cy.visit('http://www.google.com')
 ```
 
 ## Selectors
@@ -50,19 +64,19 @@ cy.get('[data-cy="my-test-button"]').invoke('text').should('equal', 'Test')
 ### Type text into a text-box
 
 ```javascript
-cy.get('input').type('hello');
+cy.get('input').type('hello')
 ```
 
 ### Type special chars into a text-box
 
 ```javascript
-cy.get('input').type('I am pressing enter now {enter}');
+cy.get('input').type('I am pressing enter now {enter}')
 ```
 
 ### Double click
 
 ```javascript
-cy.get('[data-cy="my-test-button"] > :nth-child(2)').dblclick();
+cy.get('[data-cy="my-test-button"] > :nth-child(2)').dblclick()
 ```
 
 ### Preventing from opening in new tab
@@ -81,19 +95,19 @@ cy.get('[data-cy="my-test-checkbox"]').uncheck();
 ### Select from drop-down by text
 
 ```javascript
-cy.get('[data-cy="my-test-option-dropdown"]').select('Option 1');
+cy.get('[data-cy="my-test-option-dropdown"]').select('Option 1')
 ```
 
 ### Trigger event on an element
 
 ```javascript
-cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover');
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover')
 ```
 
 ### Trigger event on an element at a certain coordinate (number of x,y pixels from the top left corner of the element)
 
 ```javascript
-cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20);
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20)
 ```
 
 ### Do a drag-drop
@@ -107,9 +121,9 @@ cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover', 10, 20);
 ### Assert text of an element
 
 ```javascript
-cy.get('h1').invoke('text').should('equal', 'Test');
+cy.get('h1').invoke('text').should('equal', 'Test')
 cy.get('h1').eq(2).should('have.text', 'Test') /* Use 'eq(n)' to pick the (n-1)th  matching element */
-cy.get('h1').eq(2).invoke('text').should('equal', 'Test');  
+cy.get('h1').eq(2).invoke('text').should('equal', 'Test')
 cy.get('h1').should('contain', 'Test')
 cy.get('h1').should('not.contain', 'Junk')
 ```
@@ -124,25 +138,25 @@ cy.get('h1').should('contain', 'Test').and('be.visible')
 ### Assert value of an element
 
 ```javascript
-cy.get('h1').should('have.attr', 'value', 'Test');
-cy.get('h1').eq(1).should('have.attr', 'value', 'Test');   /*If we want to use the 2nd h1 when there are more than one h1's*/
+cy.get('h1').should('have.attr', 'value', 'Test')
+cy.get('h1').eq(1).should('have.attr', 'value', 'Test')   /*If we want to use the 2nd h1 when there are more than one h1's*/
 ```
 
 ### Assertion using "expect" syntax
 
 ```javascript
-cy.get('[data-cy="my-test-button"]') as('my-button');
+cy.get('[data-cy="my-test-button"]') as('my-button')
 cy.get('@my-button').then( $button_element => {
-  expect($button_element.text()).to.equal('Test');
-} );
+  expect($button_element.text()).to.equal('Test')
+})
 ```
 
 ### Using "wrap" to wrap an element back to a form that can use "should" syntax
 
 ```javascript
 cy.get('[data-cy="my-test-button"]').then( $button_element => {
-  cy.wrap($button_element).should('exist');
-} );
+  cy.wrap($button_element).should('exist')
+})
 ```
 
 ### Assert number of matching elements
@@ -193,25 +207,25 @@ cy.get('@my-button').invoke('text').should('equal', 'Test')
 ## Pause execution to allow time to debug
 
 ```javascript
-cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').debug();
+cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').debug()
 // OR
 cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
-  debugger;
-);
+  debugger
+)
 ```
 
 ## Read environment variable
 
 ```javascript
 /* Prefix the environment variable name with 'CYPRESS_'. For eg, CYPRESS_TEST_VAR=Test */
-Cypress.env('TEST_VAR');
+Cypress.env('TEST_VAR')
 ```
 
 ## Simulate a logged-in user by manually setting a cookie to have a populated token
 
 ```javascript
 /* This assumes that a cookie 'user_token' is set on successful login */
-cy.setCookie('user_token', '<value of token of a loggen-in user>');
+cy.setCookie('user_token', '<value of token of a loggen-in user>')
 
 /* Cypress clears cookies by default between tests. To NOT clear a specific cookie, add the below in `support/index.js` */
 Cypress.Cookies.defaults({preserve: 'trello_token'})
@@ -227,19 +241,19 @@ Cypress.Cookies.preserveOnce('trello_token')
 module.exports = (on, config) => {
   on('task', {
     log: message => {
-      console.log(message);
-      return null;
+      console.log(message)
+      return null
     },
-  });
-};
+  })
+}
 
 /* Overwrite the "cy.log" command in the "support/commands.js" file as below */
 Cypress.Commands.overwrite('log', (subject, message) =>
-  cy.task('log', message);
-);
+  cy.task('log', message)
+)
 
 /* Once the above 2 changes are done, any call to "cy.log" will now log to terminal */
-cy.log('Test');
+cy.log('Test')
 ```
 
 ## Testing an API & handling Network requests
@@ -312,19 +326,19 @@ cy.get('#elementId').click() // This will be run only after the wait above
 Cypress.Commands.add('interceptMyGraphqlRequest', () => {
   cy.intercept('POST', /^https:\/\/api.*\/mywebsite\/graphql$/, req => {
     if (req.body.operationName.includes('myOperationName')) {
-      req.alias = 'myGraphqlRequest';
+      req.alias = 'myGraphqlRequest'
     }
-  });
-});
+  })
+})
 
 /* And in your spec where you want to start intercepting, add the below line right before the step that results in the graphQL request being sent out */
-cy.interceptMyGraphqlRequest();
+cy.interceptMyGraphqlRequest()
 
 /* To wait for the request and process its response */
 cy.wait('@myGraphqlRequest').then(graphqlRequestDetails => {
   const myField = graphqlRequestDetails.response.body.data.result.fieldThatICareAbout;
-  expect(myField).to.match(/\d+/);
-});
+  expect(myField).to.match(/\d+/)
+})
 ```
 
 ### Intercepting and sending a stubbed response
