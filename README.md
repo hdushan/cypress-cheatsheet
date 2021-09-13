@@ -194,6 +194,7 @@ cy.get('@my-button').invoke('text').should('equal', 'Test')
 
 ```javascript
 cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').debug();
+// OR
 cy.get('[data-cy="my-test-option-dropdown"]').trigger('mouseover').then(() => {
   debugger;
 );
@@ -241,7 +242,7 @@ Cypress.Commands.overwrite('log', (subject, message) =>
 cy.log('Test');
 ```
 
-## Network requests
+## Testing an API & handling Network requests
 
 ### Send a http request
 
@@ -253,6 +254,32 @@ cy.request({
     parameter1: 'First parameter'
   )
 })
+```
+
+### Test a REST API
+
+```javascript
+cy.request({
+  method: 'POST',
+  url: '/url/endpoint',
+  headers: {
+  'x-api-key': Cypress.env('apiKey'),
+  'Content-Type': 'application/json',
+  }, 
+  body: (
+    parameter1: 'First parameter'
+  ),
+  failOnStatusCode: false, // set this only if you are expecting a error response (ie 4xx or 5xx http response codes)
+}).then( 
+  response => {
+    expect(response.status).to.eq(403)
+    expect(response.body.data.attributes).to.have.property('authorization_url')
+    expect(response.body.data).to.have.property('id')
+    expect(response.body.data.attributes).to.have.property('result', 'Success')
+    expect(response.body.message).to.eq('Failed')
+    expect(response.body.data.id).to.be.a('string')
+  }
+)
 ```
 
 ### Intercept a browser request, and wait for that request to complete before moving on
